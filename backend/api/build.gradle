@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+dependencies {
+    implementation project(':core')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+// Ensure bootRun uses the correct main class for this module
+tasks.named('bootRun') {
+    mainClass.set('api.ApiApplication')
+}
+
+springBoot {
+    mainClass.set('api.ApiApplication')
+}

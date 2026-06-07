@@ -1,0 +1,40 @@
+# =========================
+# Build outputs
+# =========================
+.gradle/
+**/build/
+out/
+*.class
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# =========================
+# Generated/cache markdown files
+# =========================
+*_empty-definition*.md
+*_cache*.md
+cache/
+.cache/
+
+.bloop/
+.metals/
+.ammonite/
