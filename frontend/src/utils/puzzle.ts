@@ -18,6 +18,40 @@ export function generateRandomBoard(): number[] {
   return tiles;
 }
 
+export function generateBoardFromGoal(moves = 20): number[] {
+  let board = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
+
+  let lastMove: string | null = null;
+
+  for (let i = 0; i < moves; i++) {
+    const possibleMoves = ["up", "down", "left", "right"];
+
+    // avoid undoing the previous move
+    const opposite: Record<string, string> = {
+      up: "down",
+      down: "up",
+      left: "right",
+      right: "left",
+    };
+
+    const filtered = possibleMoves.filter(m => m !== opposite[lastMove ?? ""]);
+
+    const move = filtered[Math.floor(Math.random() * filtered.length)];
+
+    const next = moveBlank(board, move);
+
+    // only accept valid moves (important)
+    if (next !== board) {
+      board = next;
+      lastMove = move;
+    } else {
+      i--; // retry invalid move
+    }
+  }
+
+  return board;
+}
+
 export function isSolvable(board: number[]): boolean {
   const arr = board.filter(n => n !== 0);
   let inversions = 0;
@@ -46,4 +80,26 @@ export function generateSolvableBoard(): number[] {
   } while (!isSolvable(board));
 
   return board;
+}
+
+export function moveBlank(board: number[], direction: string): number[] {
+  const newBoard = [...board];
+  const index = newBoard.indexOf(0);
+
+  const row = Math.floor(index / 4);
+  const col = index % 4;
+
+  let swapIndex = -1;
+  direction = direction.toLowerCase();
+  if (direction === "up") swapIndex = (row - 1) * 4 + col;
+  if (direction === "down") swapIndex = (row + 1) * 4 + col;
+  if (direction === "left") swapIndex = row * 4 + (col - 1);
+  if (direction === "right") swapIndex = row * 4 + (col + 1);
+
+  if (swapIndex < 0 || swapIndex >= 16) return board;
+
+  [newBoard[index], newBoard[swapIndex]] =
+    [newBoard[swapIndex], newBoard[index]];
+
+  return newBoard;
 }

@@ -5,15 +5,18 @@ import { Controls } from "./components/Controls";
 
 import { solvePuzzle } from "./services/api";
 import type { SolveRequest } from "@/types/SolveRequest";
-import { generateSolvableBoard } from "./utils/puzzle";
+import { generateBoardFromGoal } from "./utils/puzzle";
+import { animateSolution } from "./utils/animation";
 
 export default function App() {
 
   const [state, setState] = useState(() =>({
-    tiles: generateSolvableBoard(),
+    tiles: generateBoardFromGoal(15),
   }));
 
   const [loading, setLoading] = useState(false);
+
+  const [animating, setAnimating] = useState(false);
 
   const handleSolve = async (
     algorithm: SolveRequest["searchAlgorithm"],
@@ -28,6 +31,10 @@ export default function App() {
         heuristic,
       });
 
+      setAnimating(true);
+      await animateSolution(result.moves, setState, 250);
+      setAnimating(false);
+
       console.log("Solution:", result);
 
     } catch (e) {
@@ -39,7 +46,7 @@ export default function App() {
 
   const handleRandomize = () => {
     setState({
-      tiles: generateSolvableBoard(),
+      tiles: generateBoardFromGoal(35),
     });
   };
 
@@ -68,7 +75,7 @@ export default function App() {
         <Controls
           onSolve={handleSolve}
           onRandomize={handleRandomize}
-          loading={loading}
+          loading={loading || animating}
         />
 
       </div>

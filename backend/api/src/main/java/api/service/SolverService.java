@@ -32,7 +32,7 @@ public class SolverService {
         );
 
         try {
-            return future.get(5, TimeUnit.SECONDS);
+            return future.get(20, TimeUnit.SECONDS);
             
         } catch (TimeoutException e) {
 
