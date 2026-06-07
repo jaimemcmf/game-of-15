@@ -15,10 +15,11 @@ import type { Algorithm, Heuristic } from "@/types/SolveRequest";
 
 type Props = {
   onSolve: (algorithm: Algorithm, heuristic?: Heuristic) => void;
+  onRandomize: () => void;
   loading: boolean;
 };
 
-export function Controls({ onSolve, loading }: Props) {
+export function Controls({ onSolve, onRandomize, loading }: Props) {
   const [algorithm, setAlgorithm] = useState<Algorithm>("astar");
   const [heuristic, setHeuristic] = useState<Heuristic>("manhattan");
 
@@ -92,6 +93,15 @@ export function Controls({ onSolve, loading }: Props) {
     }
   >
     {loading ? "Solving..." : "Start solving"}
+  </Button>
+
+  <Button
+    variant="outline"
+    className="w-full"
+    disabled={loading}
+    onClick={onRandomize}
+  >
+    Randomize board
   </Button>
 
 </Card>

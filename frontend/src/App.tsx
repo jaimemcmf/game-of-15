@@ -5,16 +5,13 @@ import { Controls } from "./components/Controls";
 
 import { solvePuzzle } from "./services/api";
 import type { SolveRequest } from "@/types/SolveRequest";
+import { generateSolvableBoard } from "./utils/puzzle";
 
 export default function App() {
-  const [state, setState] = useState({
-    tiles: [
-      1, 2, 3, 4,
-      5, 6, 7, 8,
-      9, 10, 11, 12,
-      13, 14, 0, 15,
-    ],
-  });
+
+  const [state, setState] = useState(() =>({
+    tiles: generateSolvableBoard(),
+  }));
 
   const [loading, setLoading] = useState(false);
 
@@ -38,6 +35,12 @@ export default function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRandomize = () => {
+    setState({
+      tiles: generateSolvableBoard(),
+    });
   };
 
   return (
@@ -64,6 +67,7 @@ export default function App() {
 
         <Controls
           onSolve={handleSolve}
+          onRandomize={handleRandomize}
           loading={loading}
         />
 
