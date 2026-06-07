@@ -63,6 +63,8 @@ public class SolverService {
 
             case "dfs" -> new DFS();
 
+            case "idfs" -> new IDFS();
+
             case "astar" -> new AStar(
                     switch (heuristic.toLowerCase()) {
 

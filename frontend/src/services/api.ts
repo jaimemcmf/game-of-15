@@ -1,20 +1,19 @@
-const API_BASE_URL = "http://localhost:8080";
+import type {SolveRequest} from "../types/SolveRequest";
 
-export async function solvePuzzle(request: any) {
-  const response = await fetch(
-    `${API_BASE_URL}/solve`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    }
-  );
+const BASE_URL = "http://localhost:8080";
 
-  if (!response.ok) {
+export async function solvePuzzle(req: SolveRequest) {
+  const res = await fetch(`${BASE_URL}/api/solver`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(req),
+  });
+
+  if (!res.ok) {
     throw new Error("Failed to solve puzzle");
   }
 
-  return response.json();
+  return res.json();
 }
