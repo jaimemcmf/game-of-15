@@ -9,11 +9,12 @@ public class BFS implements Solver {
     @Override
     public SearchResult solve(SearchProblem problem) {
         if (problem.initialState().equals(problem.goalState())) {
-            return new SearchResult(new ArrayList<>(), 0, true);
+            return new SearchResult(new ArrayList<>(), 0, true, 1, 0);
         }
         
         Queue<SearchNode> queue = new LinkedList<>();
         Set<PuzzleState> visited = new HashSet<>();
+        long startTime = System.currentTimeMillis();
         
         SearchNode initialNode = new SearchNode(problem.initialState(), null, 0, 0, null);
         queue.add(initialNode);
@@ -35,7 +36,7 @@ public class BFS implements Solver {
                     
                     if (nextState.equals(problem.goalState())) {
                         List<Move> path = SearchUtils.reconstructPath(nextNode);
-                        return new SearchResult(path, path.size(), true);
+                        return new SearchResult(path, path.size(), true, visited.size(), System.currentTimeMillis() - startTime);
                     }
                     
                     queue.add(nextNode);
@@ -44,7 +45,7 @@ public class BFS implements Solver {
             checkForInterruption();
         }
         
-        return new SearchResult(new ArrayList<>(), -1, false);
+        return new SearchResult(new ArrayList<>(), -1, false, visited.size(), System.currentTimeMillis() - startTime);
     }
 
     @Override

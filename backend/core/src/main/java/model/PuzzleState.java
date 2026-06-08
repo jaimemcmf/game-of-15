@@ -5,14 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PuzzleState {
-    private byte[] board;
+    
+    private final byte[] board;
 
     public PuzzleState(byte[] board) {
-        this.board = board;
+        this.board = board.clone();
     }
 
     public byte[] getBoard() {
-        return board;
+        return board.clone();
     }
 
     public static PuzzleState defaultGoal() {

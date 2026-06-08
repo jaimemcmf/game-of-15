@@ -20,6 +20,8 @@ type Props = {
 };
 
 export function Metrics({ data }: Props) {
+  console.log("Metrics data:", data);
+  console.log("Is array:", Array.isArray(data));
   return (
     <Card className="p-4">
       <div className="text-sm font-semibold mb-3">
@@ -39,12 +41,12 @@ export function Metrics({ data }: Props) {
         <TableBody>
           {data.map((row) => (
             <TableRow key={row.algorithm}>
-              <TableCell className="font-medium">
+              <TableCell className= "text-left">
                 {row.algorithm}
               </TableCell>
-              <TableCell>{row.nodesExpanded}</TableCell>
-              <TableCell>{row.depth}</TableCell>
-              <TableCell>{row.timeMs}</TableCell>
+              <TableCell className="text-left">{row.nodesExpanded}</TableCell>
+              <TableCell className="text-left">{row.depth}</TableCell>
+              <TableCell className="text-left">{row.timeMs}</TableCell>
             </TableRow>
           ))}
         </TableBody>

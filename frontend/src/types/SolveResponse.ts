@@ -3,5 +3,5 @@ export interface SolveResponse {
   moves: string[];
   depth: number;
   nodesExpanded: number;
-  executionTimeMs: number;
+  timeMs: number;
 }

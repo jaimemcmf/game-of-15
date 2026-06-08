@@ -2,7 +2,6 @@ package api.service;
 
 import model.*;
 import solver.*;
-import model.SearchProblem;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ import java.util.concurrent.*;
 @Service
 public class SolverService {
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     public SearchResult solve(
             String algorithm,
@@ -32,16 +31,13 @@ public class SolverService {
         );
 
         try {
-            return future.get(20, TimeUnit.SECONDS);
+            return future.get(5, TimeUnit.SECONDS);
             
         } catch (TimeoutException e) {
 
             future.cancel(true); // attempt to stop execution
 
-            throw new ResponseStatusException(
-                    HttpStatus.REQUEST_TIMEOUT,
-                    "Search exceeded time limit"
-            );
+            return SearchResult.timeout();
 
         } catch (ExecutionException e) {
 
@@ -66,6 +62,19 @@ public class SolverService {
             case "idfs" -> new IDFS();
 
             case "astar" -> new AStar(
+                    switch (heuristic.toLowerCase()) {
+
+                        case "manhattan" -> new ManhattanDistance();
+
+                        case "sum" -> new Sum();
+
+                        default -> throw new IllegalArgumentException(
+                                "Unknown heuristic: " + heuristic
+                        );
+                    }
+            );
+
+            case "greedy" -> new Greedy(
                     switch (heuristic.toLowerCase()) {
 
                         case "manhattan" -> new ManhattanDistance();

@@ -18,7 +18,7 @@ export function generateRandomBoard(): number[] {
   return tiles;
 }
 
-export function generateBoardFromGoal(moves = 20): number[] {
+export function generateBoardFromGoal(moves = 5): number[] {
   let board = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
 
   let lastMove: string | null = null;
@@ -40,12 +40,11 @@ export function generateBoardFromGoal(moves = 20): number[] {
 
     const next = moveBlank(board, move);
 
-    // only accept valid moves (important)
     if (next !== board) {
       board = next;
       lastMove = move;
     } else {
-      i--; // retry invalid move
+      i--;
     }
   }
 

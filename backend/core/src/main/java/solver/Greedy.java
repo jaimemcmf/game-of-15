@@ -16,9 +16,11 @@ public class Greedy implements Solver {
     @Override
     public SearchResult solve(SearchProblem problem) {
         if (problem.initialState().equals(problem.goalState())) {
-            return new SearchResult(new ArrayList<>(), 0, true);
+            return new SearchResult(new ArrayList<>(), 0, true, 1, 0);
         }
         
+        long startTime = System.currentTimeMillis();
+
         PriorityQueue<SearchNode> queue = new PriorityQueue<>((node1, node2) ->
             Integer.compare(
                 heuristic.estimate(node1.getState()),
@@ -46,7 +48,7 @@ public class Greedy implements Solver {
                     
                     if (nextState.equals(problem.goalState())) {
                         List<Move> path = SearchUtils.reconstructPath(nextNode);
-                        return new SearchResult(path, path.size(), true);
+                        return new SearchResult(path, path.size(), true, visited.size(), System.currentTimeMillis() - startTime);
                     }
                     
                     queue.add(nextNode);
@@ -55,7 +57,7 @@ public class Greedy implements Solver {
             checkForInterruption();
         }
         
-        return new SearchResult(new ArrayList<>(), -1, false);
+        return new SearchResult(new ArrayList<>(), -1, false, visited.size(), System.currentTimeMillis() - startTime);
     }
     
     @Override
