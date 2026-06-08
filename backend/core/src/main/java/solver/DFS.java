@@ -9,7 +9,7 @@ public class DFS implements Solver {
   @Override
   public SearchResult solve(SearchProblem problem) {
     if (problem.initialState().equals(problem.goalState())) {
-      return new SearchResult(new ArrayList<>(), 0, true, 1, 0);
+      return new SearchResult(new ArrayList<>(), 0, true, 1, 0, false);
     }
     
     Stack<SearchNode> stack = new Stack<>();
@@ -36,7 +36,7 @@ public class DFS implements Solver {
           
           if (nextState.equals(problem.goalState())) {
             List<Move> path = SearchUtils.reconstructPath(nextNode);
-            return new SearchResult(path, path.size(), true, visited.size(), System.currentTimeMillis() - startTime);
+            return new SearchResult(path, path.size(), true, visited.size(), System.currentTimeMillis() - startTime, false);
           }
           
           stack.push(nextNode);
@@ -45,7 +45,7 @@ public class DFS implements Solver {
       checkForInterruption();
     }
     
-    return new SearchResult(new ArrayList<>(), -1, false, visited.size(), System.currentTimeMillis() - startTime);
+    return new SearchResult(new ArrayList<>(), -1, false, visited.size(), System.currentTimeMillis() - startTime, false);
   }
 
   @Override

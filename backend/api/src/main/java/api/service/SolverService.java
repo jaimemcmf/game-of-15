@@ -3,9 +3,7 @@ package api.service;
 import model.*;
 import solver.*;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import heuristic.ManhattanDistance;
 import heuristic.Sum;
@@ -37,7 +35,7 @@ public class SolverService {
 
             future.cancel(true); // attempt to stop execution
 
-            return SearchResult.timeout();
+            return SearchResult.timedOutSearchResult();
 
         } catch (ExecutionException e) {
 

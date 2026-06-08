@@ -2,7 +2,6 @@ package api.controller;
 
 import model.SearchResult;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -20,9 +19,7 @@ public class SolverController {
 
         private final SolverService service;
 
-        public SolverController(
-                        SolverService service) {
-
+        public SolverController(SolverService service) {
                 this.service = service;
         }
 
@@ -36,6 +33,7 @@ public class SolverController {
 
                 return new SolveResponseDto(
                                 request.searchAlgorithm(),
+                                request.heuristic(),
                                 result.solved(),
                                 result.path()
                                                 .stream()
@@ -53,13 +51,13 @@ public class SolverController {
                 ExecutorService executor = Executors.newFixedThreadPool(5);
 
                 List<AlgorithmConfig> configs = List.of(
-                                new AlgorithmConfig("bfs", null),
-                                new AlgorithmConfig("dfs", null),
-                                new AlgorithmConfig("idfs", null),
-                                new AlgorithmConfig("greedy", "sum"),
-                                new AlgorithmConfig("greedy", "sum"),
-                                new AlgorithmConfig("astar", "manhattan"),
-                                new AlgorithmConfig("astar", "manhattan"));
+                                new AlgorithmConfig("BFS", null),
+                                new AlgorithmConfig("DFS", null),
+                                new AlgorithmConfig("IDFS", null),
+                                new AlgorithmConfig("Greedy", "Sum"),
+                                new AlgorithmConfig("Greedy", "Sum"),
+                                new AlgorithmConfig("AStar", "Manhattan"),
+                                new AlgorithmConfig("AStar", "Manhattan"));
 
                 List<CompletableFuture<SolveResponseDto>> futures = configs.stream()
                                 .map(cfg -> CompletableFuture.supplyAsync(() -> {
@@ -72,17 +70,19 @@ public class SolverController {
 
                                                 return new SolveResponseDto(
                                                                 cfg.name(),
+                                                                cfg.heuristic(),
                                                                 result.solved(),
                                                                 result.path().stream().map(Enum::name).toList(),
                                                                 result.depth(),
                                                                 result.nodesExpanded(),
                                                                 result.timeMs(),
-                                                                false);
+                                                                result.timedOut());
 
                                         } catch (Exception e) {
                                                 // return a "failed" result instead of failing the whole pipeline
                                                 return new SolveResponseDto(
                                                                 cfg.name(),
+                                                                cfg.heuristic(),
                                                                 false,
                                                                 List.of(),
                                                                 -1,

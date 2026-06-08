@@ -1,4 +1,4 @@
-export type Algorithm = "bfs" | "dfs" | "astar" | "greedy" | "idfs";
+export type Algorithm = "BFS" | "dfs" | "astar" | "greedy" | "idfs";
 
 export type Heuristic = "manhattan" | "sum";
 

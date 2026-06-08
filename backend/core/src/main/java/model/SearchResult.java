@@ -7,12 +7,13 @@ public record SearchResult(
         int depth,
         boolean solved,
         int nodesExpanded,
-        long timeMs
+        long timeMs,
+        boolean timedOut
 ) {
     public static SearchResult unsolvable() {
-        return new SearchResult(List.of(), 0, false, 0, 0);
+        return new SearchResult(List.of(), 0, false, 0, 0, false);
     }
-    public static SearchResult timeout() {
-        return new SearchResult(List.of(), 0, false, 0, 0);
+    public static SearchResult timedOutSearchResult() {
+        return new SearchResult(List.of(), 0, false, 0, 0, true);
     }
 }

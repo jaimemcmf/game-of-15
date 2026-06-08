@@ -4,6 +4,7 @@ import java.util.List;
 
 public record SolveResponseDto(
     String algorithm,
+    String heuristic,
     boolean solved,
     List<String> moves,
     int depth,

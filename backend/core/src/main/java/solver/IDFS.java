@@ -10,7 +10,7 @@ public class IDFS implements Solver {
   public SearchResult solve(SearchProblem problem) {
     long startTime = System.currentTimeMillis();
     if (problem.initialState().equals(problem.goalState())) {
-      return new SearchResult(new ArrayList<>(), 0, true, 1, System.currentTimeMillis() - startTime);
+      return new SearchResult(new ArrayList<>(), 0, true, 1, System.currentTimeMillis() - startTime, false);
     }
     
     int maxDepth = 1;
@@ -52,7 +52,7 @@ public class IDFS implements Solver {
           
           if (nextState.equals(problem.goalState())) {
             List<Move> path = SearchUtils.reconstructPath(nextNode);
-            return new SearchResult(path, path.size(), true, visited.size(), System.currentTimeMillis() - startTime);
+            return new SearchResult(path, path.size(), true, visited.size(), System.currentTimeMillis() - startTime, false);
           }
           
           // Only push if we haven't exceeded the depth limit
@@ -64,7 +64,7 @@ public class IDFS implements Solver {
       checkForInterruption();
     }
     
-    return new SearchResult(new ArrayList<>(), -1, false, visited.size(), System.currentTimeMillis() - startTime);
+    return new SearchResult(new ArrayList<>(), -1, false, visited.size(), System.currentTimeMillis() - startTime, false);
   }
 
   @Override

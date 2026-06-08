@@ -20,9 +20,11 @@ type SolveResult = {
 
 type CompareResult = {
   algorithm: string;
+  heuristic: string;
   nodesExpanded: number;
   depth: number;
   timeMs: number;
+  timeout: boolean;
 }[];
 
 export default function App() {
@@ -73,6 +75,7 @@ export default function App() {
 
       setResult(null); // clear single solve
       setCompareResults(compareResults.results);
+      console.log(compareResults.results);
       try {
         await animateSolution(compareResults.results[0].moves, setState, 250);
       } finally {
@@ -126,9 +129,11 @@ export default function App() {
                   ? [
                       {
                         algorithm: result.algorithm,
+                        heuristic: "",
                         nodesExpanded: result.nodesExpanded,
                         depth: result.depth,
                         timeMs: result.timeMs,
+                        timeout: false
                       },
                     ]
                   : []
