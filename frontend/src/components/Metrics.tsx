@@ -54,8 +54,8 @@ const getStatusBadge = (timeout: boolean) => {
 
 export function Metrics({ data }: Props) {
   return (
-    <Card className="p-4">
-      <div className="text-sm font-semibold mb-3">Algorithm Performance</div>
+    <Card className="p-6">
+      <div className="text-sm font-semibold">Algorithm Performance</div>
 
       <Table>
         <TableHeader>

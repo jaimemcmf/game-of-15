@@ -95,7 +95,7 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
             onSolve(algorithm, showHeuristic ? heuristic : undefined)
           }
         >
-          {loading ? "Solving..." : "Start solving"}
+          {loading ? "Solving..." : "Solve"}
         </Button>
 
         <Button

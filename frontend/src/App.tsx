@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PuzzleBoard } from "./components/PuzzleBoard";
 import { Controls } from "./components/Controls";
 import { Metrics } from "./components/Metrics";
+import { SolutionMoves } from "./components/SolutionMoves";
 
 import { compareAlgorithms, solvePuzzle } from "./services/api";
 import type { SolveRequest } from "@/types/SolveRequest";
@@ -25,22 +26,26 @@ type CompareResult = {
   depth: number;
   timeMs: number;
   timeout: boolean;
+  moves: string[];
 }[];
 
 export default function App() {
   const [state, setState] = useState(() => ({
-    tiles: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,0,15],
+    tiles: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15],
   }));
 
   const [loading, setLoading] = useState(false);
   const [animating, setAnimating] = useState(false);
 
   const [result, setResult] = useState<SolveResult | null>(null);
-  const [compareResults, setCompareResults] = useState<CompareResult | null>(null);
+  const [compareResults, setCompareResults] =
+    useState<CompareResult | null>(null);
+
+  const [displayedMoves, setDisplayedMoves] = useState<string[]>([]);
 
   const handleSolve = async (
     algorithm: SolveRequest["searchAlgorithm"],
-    heuristic?: SolveRequest["heuristic"],
+    heuristic?: SolveRequest["heuristic"]
   ) => {
     setLoading(true);
 
@@ -51,10 +56,12 @@ export default function App() {
         heuristic,
       });
 
-      setCompareResults(null); // clear compare mode
+      setCompareResults(null);
       setResult(solveResult);
+      setDisplayedMoves(solveResult.moves);
 
       setAnimating(true);
+
       try {
         await animateSolution(solveResult.moves, setState, 250);
       } finally {
@@ -71,15 +78,22 @@ export default function App() {
     setLoading(true);
 
     try {
-      const compareResults = await compareAlgorithms(state.tiles);
+      const compareResponse = await compareAlgorithms(state.tiles);
 
-      setResult(null); // clear single solve
-      setCompareResults(compareResults.results);
-      console.log(compareResults.results);
-      try {
-        await animateSolution(compareResults.results[0].moves, setState, 250);
-      } finally {
-        setAnimating(false);
+      setResult(null);
+      setCompareResults(compareResponse.results);
+
+      const validResults = compareResponse.results.filter(
+        (r: { timeout: boolean; moves: string | string[]; }) => !r.timeout && r.moves?.length
+      );
+
+      if (validResults.length > 0) {
+        const bestResult = validResults.reduce((best: { depth: number; }, current: { depth: number; }) =>
+          current.depth < best.depth ? current : best
+        );
+
+        setDisplayedMoves(bestResult.moves);
+
       }
     } catch (e) {
       console.error(e);
@@ -95,17 +109,25 @@ export default function App() {
 
     setResult(null);
     setCompareResults(null);
+    setDisplayedMoves([]);
   };
 
   return (
     <div className="min-h-screen bg-background flex justify-center p-6">
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-[1fr_280px] gap-10 items-center">
+      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-[1fr_280px] gap-x-10 gap-y-2 items-center">
 
         {/* LEFT: Puzzle */}
-        <div className="flex items-center justify-center w-full">
+        <div className="flex flex-col items-center w-full">
           <div className="w-[520px] h-[520px] flex items-center justify-center">
-            <PuzzleBoard state={{ tiles: state.tiles }} setState={setState} />
+            <PuzzleBoard
+              state={{ tiles: state.tiles }}
+              setState={setState}
+            />
           </div>
+
+          {displayedMoves.length > 0 && (
+            <SolutionMoves moves={displayedMoves} />
+          )}
         </div>
 
         {/* CONTROLS */}
@@ -133,7 +155,7 @@ export default function App() {
                         nodesExpanded: result.nodesExpanded,
                         depth: result.depth,
                         timeMs: result.timeMs,
-                        timeout: false
+                        timeout: false,
                       },
                     ]
                   : []
