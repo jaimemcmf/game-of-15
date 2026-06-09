@@ -10,25 +10,8 @@ import type { SolveRequest } from "@/types/SolveRequest";
 
 import { generateBoardFromGoal } from "./utils/puzzle";
 import { animateSolution } from "./utils/animation";
-
-type SolveResult = {
-  algorithm: string;
-  moves: string[];
-  nodesExpanded: number;
-  depth: number;
-  timeMs: number;
-  timedOut: boolean;
-};
-
-type CompareResult = {
-  algorithm: string;
-  heuristic: string;
-  nodesExpanded: number;
-  depth: number;
-  timeMs: number;
-  timeout: boolean;
-  moves: string[];
-}[];
+import type { Result } from "./types/Result";
+import type { Difficulty } from "./types/Difficulty";
 
 export default function App() {
   const [state, setState] = useState(() => ({
@@ -38,11 +21,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [animating, setAnimating] = useState(false);
 
-  const [result, setResult] = useState<SolveResult | null>(null);
-  const [compareResults, setCompareResults] = useState<CompareResult | null>(
-    null,
-  );
-
+  const [metrics, setMetrics] = useState<Result[]>([]);
   const [displayedMoves, setDisplayedMoves] = useState<string[]>([]);
 
   const handleSolve = async (
@@ -52,16 +31,16 @@ export default function App() {
     setLoading(true);
 
     try {
-      const solveResult = await solvePuzzle({
+      const solveResult: Result = await solvePuzzle({
         initialState: state.tiles,
         searchAlgorithm: algorithm,
         heuristic,
       });
 
-      setCompareResults(null);
-      setResult(solveResult);
-      console.log("Solve result:", solveResult);
+      setMetrics([solveResult]);
       setDisplayedMoves(solveResult.moves);
+
+      console.log("Solve result:", solveResult);
     } catch (e) {
       console.error(e);
     } finally {
@@ -75,18 +54,17 @@ export default function App() {
     try {
       const compareResponse = await compareAlgorithms(state.tiles);
 
-      setResult(null);
-      setCompareResults(compareResponse.results);
+      const results: Result[] = compareResponse.results;
 
-      const validResults = compareResponse.results.filter(
-        (r: { timeout: boolean; moves: string | string[] }) =>
-          !r.timeout && r.moves?.length,
+      setMetrics(results);
+
+      const validResults = results.filter(
+        (r) => !r.timedOut && r.moves.length > 0,
       );
 
       if (validResults.length > 0) {
-        const bestResult = validResults.reduce(
-          (best: { depth: number }, current: { depth: number }) =>
-            current.depth < best.depth ? current : best,
+        const bestResult = validResults.reduce((best, current) =>
+          current.depth < best.depth ? current : best,
         );
 
         setDisplayedMoves(bestResult.moves);
@@ -98,13 +76,18 @@ export default function App() {
     }
   };
 
-  const handleRandomize = () => {
+  const handleRandomize = (difficulty: Difficulty) => {
+    const numberOfMoves = {
+      Easy: Math.floor(Math.random() * 6) + 3, // 3-8 moves
+      Medium: Math.floor(Math.random() * 11) + 10, // 10-20 moves
+      Hard: Math.floor(Math.random() * 21) + 25, // 25-45 moves
+    };
+
     setState({
-      tiles: generateBoardFromGoal(5),
+      tiles: generateBoardFromGoal(numberOfMoves[difficulty]),
     });
 
-    setResult(null);
-    setCompareResults(null);
+    setMetrics([]);
     setDisplayedMoves([]);
   };
 
@@ -145,26 +128,9 @@ export default function App() {
         </div>
 
         {/* METRICS */}
-        {(result || compareResults) && (
+        {metrics.length > 0 && (
           <div className="col-span-full">
-            <Metrics
-              data={
-                compareResults
-                  ? compareResults
-                  : result
-                    ? [
-                        {
-                          algorithm: result.algorithm,
-                          heuristic: "",
-                          nodesExpanded: result.nodesExpanded,
-                          depth: result.depth,
-                          timeMs: result.timeMs,
-                          timedOut: result.timedOut,
-                        },
-                      ]
-                    : []
-              }
-            />
+            <Metrics data={metrics} />
           </div>
         )}
       </div>

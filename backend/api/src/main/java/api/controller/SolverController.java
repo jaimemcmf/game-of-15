@@ -48,16 +48,18 @@ public class SolverController {
         @PostMapping("/compare")
         public CompareResponseDto compare(@RequestBody CompareRequestDto request) {
 
-                ExecutorService executor = Executors.newFixedThreadPool(5);
-
                 List<AlgorithmConfig> configs = List.of(
                                 new AlgorithmConfig("BFS", null),
                                 new AlgorithmConfig("DFS", null),
                                 new AlgorithmConfig("IDFS", null),
                                 new AlgorithmConfig("Greedy", "Sum"),
-                                new AlgorithmConfig("Greedy", "Sum"),
+                                new AlgorithmConfig("Greedy", "Manhattan"),
+                                new AlgorithmConfig("Greedy", "ManhattanLinearConflict"),
+                                new AlgorithmConfig("AStar", "Sum"),
                                 new AlgorithmConfig("AStar", "Manhattan"),
-                                new AlgorithmConfig("AStar", "Manhattan"));
+                                new AlgorithmConfig("AStar", "ManhattanLinearConflict"));
+                
+                ExecutorService executor = Executors.newFixedThreadPool(configs.size());
 
                 List<CompletableFuture<SolveResponseDto>> futures = configs.stream()
                                 .map(cfg -> CompletableFuture.supplyAsync(() -> {

@@ -66,6 +66,8 @@ public class SolverService {
 
                         case "sum" -> new Sum();
 
+                        case "manhattanlinearconflict" -> new heuristic.ManhattanLinearConflict();
+
                         default -> throw new IllegalArgumentException(
                                 "Unknown heuristic: " + heuristic
                         );
@@ -78,6 +80,8 @@ public class SolverService {
                         case "manhattan" -> new ManhattanDistance();
 
                         case "sum" -> new Sum();
+
+                        case "manhattanlinearconflict" -> new heuristic.ManhattanLinearConflict();
 
                         default -> throw new IllegalArgumentException(
                                 "Unknown heuristic: " + heuristic

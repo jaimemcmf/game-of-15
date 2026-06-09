@@ -9,20 +9,13 @@ import {
 import { Card } from "../../@/components/ui/card";
 import { Badge } from "../../@/components/ui/badge";
 
-type Metric = {
-  algorithm: string;
-  heuristic: string;
-  nodesExpanded: number;
-  depth: number;
-  timeMs: number;
-  timedOut: boolean;
-};
+import type { Result } from "../types/Result";
 
 type Props = {
-  data: Metric[];
+  data: Result[];
 };
 
-const formatMetric = (row: Metric) => {
+const formatMetric = (row: Result) => {
   if (row.timedOut) {
     return {
       nodes: "—",
@@ -34,23 +27,20 @@ const formatMetric = (row: Metric) => {
   return {
     nodes: row.nodesExpanded,
     depth: row.depth,
-    time: `${row.timeMs}`,
+    time: row.timeMs,
   };
 };
 
-const getStatusBadge = (timeout: boolean) => {
-  if (timeout) {
-    return {
-      label: "TIMEOUT",
-      className: "bg-red-500 text-white hover:bg-red-500",
-    };
-  }
-
-  return {
-    label: "SOLVED",
-    className: "bg-green-500 hover:bg-green-500",
-  };
-};
+const getStatusBadge = (timedOut: boolean) =>
+  timedOut
+    ? {
+        label: "TIMEOUT",
+        className: "bg-red-500 text-white hover:bg-red-500",
+      }
+    : {
+        label: "SOLVED",
+        className: "bg-green-500 hover:bg-green-500",
+      };
 
 export function Metrics({ data }: Props) {
   return (
@@ -72,29 +62,22 @@ export function Metrics({ data }: Props) {
         <TableBody>
           {data.map((row) => {
             const f = formatMetric(row);
+            const status = getStatusBadge(row.timedOut);
 
             return (
-              <TableRow key={row.algorithm + row.heuristic}>
-                <TableCell className="text-left">{row.algorithm}</TableCell>
+              <TableRow className="text-left" key={`${row.algorithm}-${row.heuristic ?? "none"}`}>
+                <TableCell>{row.algorithm}</TableCell>
 
-                <TableCell className="text-left">
-                  {row.heuristic || "—"}
-                </TableCell>
+                <TableCell>{row.heuristic ?? "—"}</TableCell>
 
-                <TableCell className="text-left">{f.nodes}</TableCell>
+                <TableCell>{f.nodes}</TableCell>
 
-                <TableCell className="text-left">{f.depth}</TableCell>
+                <TableCell>{f.depth}</TableCell>
 
-                <TableCell className="text-left">{f.time}</TableCell>
+                <TableCell>{f.time}</TableCell>
 
-                <TableCell className="text-left">
-                  {(() => {
-                    const status = getStatusBadge(row.timedOut);
-
-                    return (
-                      <Badge className={status.className}>{status.label}</Badge>
-                    );
-                  })()}
+                <TableCell>
+                  <Badge className={status.className}>{status.label}</Badge>
                 </TableCell>
               </TableRow>
             );

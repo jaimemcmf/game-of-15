@@ -18,18 +18,19 @@ import {
 } from "../../@/components/ui/card";
 
 import type { Algorithm, Heuristic } from "@/types/SolveRequest";
+import type { Difficulty } from "@/types/Difficulty";
 
 type Props = {
   onSolve: (algorithm: Algorithm, heuristic?: Heuristic) => void;
   onCompare: () => void;
-  onRandomize: () => void;
+  onRandomize: (difficulty: Difficulty) => void;
   loading: boolean;
 };
 
 export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
   const [algorithm, setAlgorithm] = useState<Algorithm | undefined>();
   const [heuristic, setHeuristic] = useState<Heuristic | undefined>();
-
+  const [difficulty, setDifficulty] = useState<Difficulty>("Medium");
   const showHeuristic = algorithm === "AStar" || algorithm === "Greedy";
 
   return (
@@ -90,6 +91,25 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
             </p>
           </div>
         )}
+
+        <div className="space-y-2">
+          <div className="text-sm font-medium">Difficulty</div>
+
+          <Select
+            value={difficulty}
+            onValueChange={(v) => setDifficulty(v as Difficulty)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="Easy">Easy</SelectItem>
+              <SelectItem value="Medium">Medium</SelectItem>
+              <SelectItem value="Hard">Hard</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </CardContent>
 
       <CardFooter className="flex flex-col gap-2">
@@ -97,9 +117,9 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
           className="w-full"
           disabled={loading || !algorithm || (showHeuristic && !heuristic)}
           onClick={() => {
-            if (algorithm) onSolve(algorithm, showHeuristic ? heuristic : undefined)
-          }
-          }
+            if (algorithm)
+              onSolve(algorithm, showHeuristic ? heuristic : undefined);
+          }}
         >
           {loading ? "Solving..." : "Solve"}
         </Button>
@@ -112,7 +132,7 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
           variant="outline"
           className="w-full"
           disabled={loading}
-          onClick={onRandomize}
+          onClick={() => onRandomize(difficulty)}
         >
           Randomize board
         </Button>
