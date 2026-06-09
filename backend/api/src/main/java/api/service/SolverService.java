@@ -89,6 +89,21 @@ public class SolverService {
                     }
             );
 
+            case "idastar" -> new IDAStar(
+                    switch (heuristic.toLowerCase()) {
+
+                        case "manhattan" -> new ManhattanDistance();
+
+                        case "sum" -> new Sum();
+
+                        case "manhattanlinearconflict" -> new heuristic.ManhattanLinearConflict();
+
+                        default -> throw new IllegalArgumentException(
+                                "Unknown heuristic: " + heuristic
+                        );
+                    }
+            );
+
             default -> throw new IllegalArgumentException(
                     "Unknown algorithm: " + algorithm
             );

@@ -53,15 +53,14 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="BFS">BFS (Breadth-First Search)</SelectItem>
-
               <SelectItem value="DFS">DFS (Depth-First Search)</SelectItem>
-
               <SelectItem value="IDFS">IDFS (Iterative Deepening)</SelectItem>
-
-              <SelectItem value="AStar">A* Search</SelectItem>
-
+              <SelectItem value="BFS">BFS (Breadth-First Search)</SelectItem>
               <SelectItem value="Greedy">Greedy Best-First Search</SelectItem>
+              <SelectItem value="AStar">A* Search</SelectItem>
+              <SelectItem value="IDAStar">
+                Iterative Deepening A* Search
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -80,9 +79,12 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="Manhattan">Manhattan distance</SelectItem>
-
                 <SelectItem value="Sum">Misplaced tiles</SelectItem>
+                <SelectItem value="Manhattan">Manhattan distance</SelectItem>
+                <SelectItem value="ManhattanLinearConflict">
+                  Manhattan distance + Linear conflict
+                </SelectItem>
+
               </SelectContent>
             </Select>
 
