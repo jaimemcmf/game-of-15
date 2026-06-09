@@ -15,7 +15,7 @@ type Metric = {
   nodesExpanded: number;
   depth: number;
   timeMs: number;
-  timeout: boolean;
+  timedOut: boolean;
 };
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
 };
 
 const formatMetric = (row: Metric) => {
-  if (row.timeout) {
+  if (row.timedOut) {
     return {
       nodes: "—",
       depth: "—",
@@ -78,7 +78,7 @@ export function Metrics({ data }: Props) {
                 <TableCell className="text-left">{row.algorithm}</TableCell>
 
                 <TableCell className="text-left">
-                  {row.heuristic || "N/A"}
+                  {row.heuristic || "—"}
                 </TableCell>
 
                 <TableCell className="text-left">{f.nodes}</TableCell>
@@ -89,7 +89,7 @@ export function Metrics({ data }: Props) {
 
                 <TableCell className="text-left">
                   {(() => {
-                    const status = getStatusBadge(row.timeout);
+                    const status = getStatusBadge(row.timedOut);
 
                     return (
                       <Badge className={status.className}>{status.label}</Badge>

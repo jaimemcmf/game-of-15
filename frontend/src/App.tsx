@@ -17,6 +17,7 @@ type SolveResult = {
   nodesExpanded: number;
   depth: number;
   timeMs: number;
+  timedOut: boolean;
 };
 
 type CompareResult = {
@@ -38,14 +39,15 @@ export default function App() {
   const [animating, setAnimating] = useState(false);
 
   const [result, setResult] = useState<SolveResult | null>(null);
-  const [compareResults, setCompareResults] =
-    useState<CompareResult | null>(null);
+  const [compareResults, setCompareResults] = useState<CompareResult | null>(
+    null,
+  );
 
   const [displayedMoves, setDisplayedMoves] = useState<string[]>([]);
 
   const handleSolve = async (
     algorithm: SolveRequest["searchAlgorithm"],
-    heuristic?: SolveRequest["heuristic"]
+    heuristic?: SolveRequest["heuristic"],
   ) => {
     setLoading(true);
 
@@ -58,15 +60,8 @@ export default function App() {
 
       setCompareResults(null);
       setResult(solveResult);
+      console.log("Solve result:", solveResult);
       setDisplayedMoves(solveResult.moves);
-
-      setAnimating(true);
-
-      try {
-        await animateSolution(solveResult.moves, setState, 250);
-      } finally {
-        setAnimating(false);
-      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -84,16 +79,17 @@ export default function App() {
       setCompareResults(compareResponse.results);
 
       const validResults = compareResponse.results.filter(
-        (r: { timeout: boolean; moves: string | string[]; }) => !r.timeout && r.moves?.length
+        (r: { timeout: boolean; moves: string | string[] }) =>
+          !r.timeout && r.moves?.length,
       );
 
       if (validResults.length > 0) {
-        const bestResult = validResults.reduce((best: { depth: number; }, current: { depth: number; }) =>
-          current.depth < best.depth ? current : best
+        const bestResult = validResults.reduce(
+          (best: { depth: number }, current: { depth: number }) =>
+            current.depth < best.depth ? current : best,
         );
 
         setDisplayedMoves(bestResult.moves);
-
       }
     } catch (e) {
       console.error(e);
@@ -112,21 +108,29 @@ export default function App() {
     setDisplayedMoves([]);
   };
 
+  const handleReplay = async () => {
+    if (!displayedMoves.length) return;
+
+    setAnimating(true);
+
+    try {
+      await animateSolution(displayedMoves, setState, 250);
+    } finally {
+      setAnimating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex justify-center p-6">
       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-[1fr_280px] gap-x-10 gap-y-2 items-center">
-
         {/* LEFT: Puzzle */}
         <div className="flex flex-col items-center w-full">
           <div className="w-[520px] h-[520px] flex items-center justify-center">
-            <PuzzleBoard
-              state={{ tiles: state.tiles }}
-              setState={setState}
-            />
+            <PuzzleBoard state={{ tiles: state.tiles }} setState={setState} />
           </div>
 
           {displayedMoves.length > 0 && (
-            <SolutionMoves moves={displayedMoves} />
+            <SolutionMoves moves={displayedMoves} onReplay={handleReplay} />
           )}
         </div>
 
@@ -148,17 +152,17 @@ export default function App() {
                 compareResults
                   ? compareResults
                   : result
-                  ? [
-                      {
-                        algorithm: result.algorithm,
-                        heuristic: "",
-                        nodesExpanded: result.nodesExpanded,
-                        depth: result.depth,
-                        timeMs: result.timeMs,
-                        timeout: false,
-                      },
-                    ]
-                  : []
+                    ? [
+                        {
+                          algorithm: result.algorithm,
+                          heuristic: "",
+                          nodesExpanded: result.nodesExpanded,
+                          depth: result.depth,
+                          timeMs: result.timeMs,
+                          timedOut: result.timedOut,
+                        },
+                      ]
+                    : []
               }
             />
           </div>

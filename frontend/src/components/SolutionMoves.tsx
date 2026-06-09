@@ -1,5 +1,6 @@
 type SolutionMovesProps = {
   moves: string[];
+  onReplay: () => void;
 };
 
 const directionMap: Record<string, string> = {
@@ -9,11 +10,14 @@ const directionMap: Record<string, string> = {
   RIGHT: "→",
 };
 
-export function SolutionMoves({ moves }: SolutionMovesProps) {
+export function SolutionMoves({
+  moves,
+  onReplay,
+}: SolutionMovesProps) {
   if (!moves.length) return null;
 
   return (
-    <div className="w-full max-w-[520px] mt-6 rounded-xl bg-card p-4">
+    <div className="w-full max-w-[520px] mt-4 rounded-xl border bg-card p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold text-lg">Solution Path</h3>
         <span className="text-sm text-muted-foreground">
@@ -21,17 +25,24 @@ export function SolutionMoves({ moves }: SolutionMovesProps) {
         </span>
       </div>
 
-      <div className="flex flex-wrap gap-2 text-2xl">
+      <div className="flex flex-wrap gap-2 mb-4">
         {moves.map((move, index) => (
           <span
             key={index}
-            className="flex items-center justify-center w-10 h-10 rounded-md bg-secondary"
+            className="w-10 h-10 flex items-center justify-center rounded-md bg-secondary text-lg"
             title={`${index + 1}. ${move}`}
           >
             {directionMap[move.toUpperCase()] ?? "?"}
           </span>
         ))}
       </div>
+
+      <button
+        onClick={onReplay}
+        className="w-full rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition"
+      >
+        Replay Solution
+      </button>
     </div>
   );
 }

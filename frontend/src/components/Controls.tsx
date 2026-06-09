@@ -27,10 +27,10 @@ type Props = {
 };
 
 export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
-  const [algorithm, setAlgorithm] = useState<Algorithm>("astar");
-  const [heuristic, setHeuristic] = useState<Heuristic>("manhattan");
+  const [algorithm, setAlgorithm] = useState<Algorithm | undefined>();
+  const [heuristic, setHeuristic] = useState<Heuristic | undefined>();
 
-  const showHeuristic = algorithm === "astar" || algorithm === "greedy";
+  const showHeuristic = algorithm === "AStar" || algorithm === "Greedy";
 
   return (
     <Card className="border-none shadow-none">
@@ -45,18 +45,22 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
 
           <Select
             value={algorithm}
-            onValueChange={(v: Algorithm) => setAlgorithm(v)}
+            onValueChange={(v) => setAlgorithm(v as Algorithm)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select an algorithm" />
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="bfs">BFS (Breadth-First Search)</SelectItem>
-              <SelectItem value="dfs">DFS (Depth-First Search)</SelectItem>
-              <SelectItem value="idfs">IDFS (Iterative Deepening)</SelectItem>
-              <SelectItem value="astar">A* Search</SelectItem>
-              <SelectItem value="greedy">Greedy</SelectItem>
+              <SelectItem value="BFS">BFS (Breadth-First Search)</SelectItem>
+
+              <SelectItem value="DFS">DFS (Depth-First Search)</SelectItem>
+
+              <SelectItem value="IDFS">IDFS (Iterative Deepening)</SelectItem>
+
+              <SelectItem value="AStar">A* Search</SelectItem>
+
+              <SelectItem value="Greedy">Greedy Best-First Search</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -68,15 +72,16 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
 
             <Select
               value={heuristic}
-              onValueChange={(v: Heuristic) => setHeuristic(v)}
+              onValueChange={(v) => setHeuristic(v as Heuristic)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choose heuristic" />
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="manhattan">Manhattan distance</SelectItem>
-                <SelectItem value="sum">Misplaced tiles</SelectItem>
+                <SelectItem value="Manhattan">Manhattan distance</SelectItem>
+
+                <SelectItem value="Sum">Misplaced tiles</SelectItem>
               </SelectContent>
             </Select>
 
@@ -90,19 +95,16 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
       <CardFooter className="flex flex-col gap-2">
         <Button
           className="w-full"
-          disabled={loading}
-          onClick={() =>
-            onSolve(algorithm, showHeuristic ? heuristic : undefined)
+          disabled={loading || !algorithm || (showHeuristic && !heuristic)}
+          onClick={() => {
+            if (algorithm) onSolve(algorithm, showHeuristic ? heuristic : undefined)
+          }
           }
         >
           {loading ? "Solving..." : "Solve"}
         </Button>
 
-        <Button
-          className="w-full"
-          disabled={loading}
-          onClick={() => onCompare()}
-        >
+        <Button className="w-full" disabled={loading} onClick={onCompare}>
           {loading ? "Solving..." : "Compare All Algorithms"}
         </Button>
 

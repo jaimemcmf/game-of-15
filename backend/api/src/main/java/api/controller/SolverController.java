@@ -42,7 +42,7 @@ public class SolverController {
                                 result.depth(),
                                 result.nodesExpanded(),
                                 result.timeMs(),
-                                false);
+                                result.timedOut());
         }
 
         @PostMapping("/compare")

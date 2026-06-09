@@ -10,5 +10,5 @@ public record SolveResponseDto(
     int depth,
     int nodesExpanded,
     long timeMs,
-    boolean timeout
+    boolean timedOut
 ) {}

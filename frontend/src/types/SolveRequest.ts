@@ -1,6 +1,6 @@
-export type Algorithm = "BFS" | "dfs" | "astar" | "greedy" | "idfs";
+export type Algorithm = "BFS" | "DFS" | "AStar" | "Greedy" | "IDFS";
 
-export type Heuristic = "manhattan" | "sum";
+export type Heuristic = "Manhattan" | "Sum";
 
 export type SolveRequest = {
   searchAlgorithm: Algorithm;
