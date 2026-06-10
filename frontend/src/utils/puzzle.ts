@@ -34,7 +34,9 @@ export function generateBoardFromGoal(moves = 5): number[] {
       right: "left",
     };
 
-    const filtered = possibleMoves.filter(m => m !== opposite[lastMove ?? ""]);
+    const filtered = possibleMoves.filter(
+      (m) => m !== opposite[lastMove ?? ""],
+    );
 
     const move = filtered[Math.floor(Math.random() * filtered.length)];
 
@@ -52,7 +54,7 @@ export function generateBoardFromGoal(moves = 5): number[] {
 }
 
 export function isSolvable(board: number[]): boolean {
-  const arr = board.filter(n => n !== 0);
+  const arr = board.filter((n) => n !== 0);
   let inversions = 0;
 
   for (let i = 0; i < arr.length; i++) {
@@ -61,8 +63,7 @@ export function isSolvable(board: number[]): boolean {
     }
   }
 
-  const emptyRowFromBottom =
-    4 - Math.floor(board.indexOf(0) / 4);
+  const emptyRowFromBottom = 4 - Math.floor(board.indexOf(0) / 4);
 
   if (4 % 2 === 1) {
     return inversions % 2 === 0;
@@ -89,16 +90,32 @@ export function moveBlank(board: number[], direction: string): number[] {
   const col = index % 4;
 
   let swapIndex = -1;
+
   direction = direction.toLowerCase();
-  if (direction === "up") swapIndex = (row - 1) * 4 + col;
-  if (direction === "down") swapIndex = (row + 1) * 4 + col;
-  if (direction === "left") swapIndex = row * 4 + (col - 1);
-  if (direction === "right") swapIndex = row * 4 + (col + 1);
 
-  if (swapIndex < 0 || swapIndex >= 16) return board;
+  if (direction === "up" && row > 0) {
+    swapIndex = index - 4;
+  }
 
-  [newBoard[index], newBoard[swapIndex]] =
-    [newBoard[swapIndex], newBoard[index]];
+  if (direction === "down" && row < 3) {
+    swapIndex = index + 4;
+  }
+
+  if (direction === "left" && col > 0) {
+    swapIndex = index - 1;
+  }
+
+  if (direction === "right" && col < 3) {
+    swapIndex = index + 1;
+  }
+
+  // invalid move → return same board
+  if (swapIndex === -1) return board;
+
+  [newBoard[index], newBoard[swapIndex]] = [
+    newBoard[swapIndex],
+    newBoard[index],
+  ];
 
   return newBoard;
 }

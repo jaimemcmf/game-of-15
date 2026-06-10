@@ -1,5 +1,6 @@
 package api.dto;
 
 public record CompareRequestDto(
-    byte[] initialState
+    byte[] initialState,
+    int timeOutLimit
 ) {}

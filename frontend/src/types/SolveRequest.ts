@@ -6,4 +6,5 @@ export type SolveRequest = {
   searchAlgorithm: Algorithm;
   heuristic?: Heuristic;
   initialState: number[];
+  timeOutLimit: Number;
 }

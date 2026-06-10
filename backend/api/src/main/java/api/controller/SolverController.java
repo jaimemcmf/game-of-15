@@ -29,7 +29,8 @@ public class SolverController {
                 SearchResult result = service.solve(
                                 request.searchAlgorithm(),
                                 request.heuristic(),
-                                request.initialState());
+                                request.initialState(), 
+                                request.timeOutLimit());
 
                 return new SolveResponseDto(
                                 request.searchAlgorithm(),
@@ -67,34 +68,21 @@ public class SolverController {
                 List<CompletableFuture<SolveResponseDto>> futures = configs.stream()
                                 .map(cfg -> CompletableFuture.supplyAsync(() -> {
 
-                                        try {
-                                                SearchResult result = service.solve(
-                                                                cfg.name(),
-                                                                cfg.heuristic(),
-                                                                request.initialState());
+                                        SearchResult result = service.solve(
+                                                        cfg.name(),
+                                                        cfg.heuristic(),
+                                                        request.initialState(),
+                                                        request.timeOutLimit());
 
-                                                return new SolveResponseDto(
-                                                                cfg.name(),
-                                                                cfg.heuristic(),
-                                                                result.solved(),
-                                                                result.path().stream().map(Enum::name).toList(),
-                                                                result.depth(),
-                                                                result.nodesExpanded(),
-                                                                result.timeMs(),
-                                                                result.timedOut());
-
-                                        } catch (Exception e) {
-                                                // return a "failed" result instead of failing the whole pipeline
-                                                return new SolveResponseDto(
-                                                                cfg.name(),
-                                                                cfg.heuristic(),
-                                                                false,
-                                                                List.of(),
-                                                                -1,
-                                                                -1,
-                                                                -1,
-                                                                true);
-                                        }
+                                        return new SolveResponseDto(
+                                                        cfg.name(),
+                                                        cfg.heuristic(),
+                                                        result.solved(),
+                                                        result.path().stream().map(Enum::name).toList(),
+                                                        result.depth(),
+                                                        result.nodesExpanded(),
+                                                        result.timeMs(),
+                                                        result.timedOut());
 
                                 }, executor))
                                 .toList();

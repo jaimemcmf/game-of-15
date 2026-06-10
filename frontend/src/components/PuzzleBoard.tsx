@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card } from "../../@/components/ui/card";
-import type { PuzzleState } from "@/types/puzzle";
+import type { PuzzleState } from "../types/Puzzle";
 import { isSolved } from "@/utils/puzzle";
-import { sleep } from "@/utils/animation";
+import { sleep, runSolveAnimation } from "@/utils/animations";
 
 type Props = {
   state: PuzzleState;
@@ -13,10 +13,15 @@ export function PuzzleBoard({ state, setState }: Props) {
   const { tiles } = state;
 
   const [animating, setAnimating] = useState(false);
+  const [greenTiles, setGreenTiles] = useState<Set<number>>(new Set());
+
+  const solvedRef = useRef(false);
+
+  const gridSize = 4;
 
   const getRowCol = (index: number) => ({
-    row: Math.floor(index / 4),
-    col: index % 4,
+    row: Math.floor(index / gridSize),
+    col: index % gridSize,
   });
 
   const isAdjacent = (i1: number, i2: number) => {
@@ -36,11 +41,11 @@ export function PuzzleBoard({ state, setState }: Props) {
 
     const newTiles = [...tiles];
 
-    // swap
-    [newTiles[index], newTiles[zeroIndex]] =
-      [newTiles[zeroIndex], newTiles[index]];
+    [newTiles[index], newTiles[zeroIndex]] = [
+      newTiles[zeroIndex],
+      newTiles[index],
+    ];
 
-    // simulate animation delay
     setState({ ...state, tiles: newTiles });
     await sleep(120);
 
@@ -49,15 +54,21 @@ export function PuzzleBoard({ state, setState }: Props) {
 
   const solved = isSolved(tiles);
 
+  useEffect(() => {
+    if (solved && !solvedRef.current) {
+      solvedRef.current = true;
+
+      runSolveAnimation(tiles.length, gridSize, setGreenTiles);
+    }
+
+    if (!solved) {
+      solvedRef.current = false;
+      setGreenTiles(new Set());
+    }
+  }, [solved, tiles.length]);
+
   return (
     <div className="space-y-3">
-      {/* Status */}
-      {solved && (
-        <div className="text-green-600 font-bold">
-          🎉 Puzzle Solved!
-        </div>
-      )}
-
       <Card className="p-6 w-max mx-auto">
         <div className="grid grid-cols-4 gap-3">
           {tiles.map((value, idx) => (
@@ -65,18 +76,22 @@ export function PuzzleBoard({ state, setState }: Props) {
               key={idx}
               onClick={() => handleClick(idx)}
               className={`
-  w-20 h-20 md:w-24 md:h-24
-  flex items-center justify-center
-  text-xl md:text-2xl font-bold
-  rounded-md
-  border
-  cursor-pointer
-  transition-all duration-150
-  ${value === 0
-    ? "bg-transparent border-dashed"
-    : "bg-muted hover:bg-accent"
-  }
-`}
+                w-20 h-20 md:w-24 md:h-24
+                flex items-center justify-center
+                text-xl md:text-2xl font-bold
+                rounded-md
+                border
+                cursor-pointer
+                transition-all duration-200
+
+                ${
+                  value === 0
+                    ? "bg-transparent border-dashed"
+                    : greenTiles.has(idx)
+                    ? "bg-green-500 text-white"
+                    : "bg-muted hover:bg-yellow-100"
+                }
+              `}
             >
               {value === 0 ? "" : value}
             </div>

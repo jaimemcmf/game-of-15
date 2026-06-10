@@ -20,7 +20,7 @@ const formatMetric = (row: Result) => {
     return {
       nodes: "—",
       depth: "—",
-      time: `>${row.timeMs}`,
+      time: "—",
     };
   }
 
@@ -65,7 +65,10 @@ export function Metrics({ data }: Props) {
             const status = getStatusBadge(row.timedOut);
 
             return (
-              <TableRow className="text-left" key={`${row.algorithm}-${row.heuristic ?? "none"}`}>
+              <TableRow
+                className="text-left"
+                key={`${row.algorithm}-${row.heuristic ?? "none"}`}
+              >
                 <TableCell>{row.algorithm}</TableCell>
 
                 <TableCell>{row.heuristic ?? "—"}</TableCell>

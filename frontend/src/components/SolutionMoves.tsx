@@ -41,7 +41,7 @@ export function SolutionMoves({
         onClick={onReplay}
         className="w-full rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition"
       >
-        Replay Solution
+        Play Solution
       </button>
     </div>
   );

@@ -1,7 +1,6 @@
 package solver;
 
 import model.*;
-import util.SearchUtils;
 import heuristic.Heuristic;
 
 import java.util.*;

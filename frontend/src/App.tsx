@@ -9,7 +9,7 @@ import { compareAlgorithms, solvePuzzle } from "./services/api";
 import type { SolveRequest } from "@/types/SolveRequest";
 
 import { generateBoardFromGoal } from "./utils/puzzle";
-import { animateSolution } from "./utils/animation";
+import { animateSolution } from "./utils/animations";
 import type { Result } from "./types/Result";
 import type { Difficulty } from "./types/Difficulty";
 
@@ -25,8 +25,9 @@ export default function App() {
   const [displayedMoves, setDisplayedMoves] = useState<string[]>([]);
 
   const handleSolve = async (
+    timeOutLimit: Number,
     algorithm: SolveRequest["searchAlgorithm"],
-    heuristic?: SolveRequest["heuristic"],
+    heuristic?: SolveRequest["heuristic"]
   ) => {
     setLoading(true);
 
@@ -35,6 +36,7 @@ export default function App() {
         initialState: state.tiles,
         searchAlgorithm: algorithm,
         heuristic,
+        timeOutLimit
       });
 
       setMetrics([solveResult]);
@@ -48,11 +50,13 @@ export default function App() {
     }
   };
 
-  const handleCompare = async () => {
+  const handleCompare = async (
+    timeOutLimit: Number
+  ) => {
     setLoading(true);
 
     try {
-      const compareResponse = await compareAlgorithms(state.tiles);
+      const compareResponse = await compareAlgorithms({initialState: state.tiles, timeOutLimit: timeOutLimit});
 
       const results: Result[] = compareResponse.results;
 
@@ -130,7 +134,7 @@ export default function App() {
         {/* METRICS */}
         {metrics.length > 0 && (
           <div className="col-span-full">
-            <Metrics data={metrics} />
+            <Metrics data={metrics}/>
           </div>
         )}
       </div>

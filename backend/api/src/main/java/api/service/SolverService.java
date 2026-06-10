@@ -18,19 +18,18 @@ public class SolverService {
     public SearchResult solve(
             String algorithm,
             String heuristic,
-            byte[] initialBoard) {
+            byte[] initialBoard,
+            int timeOutLimit) {
 
         Solver solver = createSolver(algorithm, heuristic);
         PuzzleState initial = new PuzzleState(initialBoard);
         SearchProblem problem = new SearchProblem(initial);
 
-        Future<SearchResult> future = executor.submit(() ->
-                solver.solve(problem)
-        );
+        Future<SearchResult> future = executor.submit(() -> solver.solve(problem));
 
         try {
-            return future.get(5, TimeUnit.SECONDS);
-            
+            return future.get(timeOutLimit, TimeUnit.SECONDS);
+
         } catch (TimeoutException e) {
 
             future.cancel(true); // attempt to stop execution
@@ -59,21 +58,6 @@ public class SolverService {
 
             case "idfs" -> new IDFS();
 
-            case "astar" -> new AStar(
-                    switch (heuristic.toLowerCase()) {
-
-                        case "manhattan" -> new ManhattanDistance();
-
-                        case "sum" -> new Sum();
-
-                        case "manhattanlinearconflict" -> new heuristic.ManhattanLinearConflict();
-
-                        default -> throw new IllegalArgumentException(
-                                "Unknown heuristic: " + heuristic
-                        );
-                    }
-            );
-
             case "greedy" -> new Greedy(
                     switch (heuristic.toLowerCase()) {
 
@@ -84,10 +68,21 @@ public class SolverService {
                         case "manhattanlinearconflict" -> new heuristic.ManhattanLinearConflict();
 
                         default -> throw new IllegalArgumentException(
-                                "Unknown heuristic: " + heuristic
-                        );
-                    }
-            );
+                                "Unknown heuristic: " + heuristic);
+                    });
+
+            case "astar" -> new AStar(
+                    switch (heuristic.toLowerCase()) {
+
+                        case "manhattan" -> new ManhattanDistance();
+
+                        case "sum" -> new Sum();
+
+                        case "manhattanlinearconflict" -> new heuristic.ManhattanLinearConflict();
+
+                        default -> throw new IllegalArgumentException(
+                                "Unknown heuristic: " + heuristic);
+                    });
 
             case "idastar" -> new IDAStar(
                     switch (heuristic.toLowerCase()) {
@@ -99,14 +94,11 @@ public class SolverService {
                         case "manhattanlinearconflict" -> new heuristic.ManhattanLinearConflict();
 
                         default -> throw new IllegalArgumentException(
-                                "Unknown heuristic: " + heuristic
-                        );
-                    }
-            );
+                                "Unknown heuristic: " + heuristic);
+                    });
 
             default -> throw new IllegalArgumentException(
-                    "Unknown algorithm: " + algorithm
-            );
+                    "Unknown algorithm: " + algorithm);
         };
     }
 }
