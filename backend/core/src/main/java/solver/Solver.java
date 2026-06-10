@@ -2,10 +2,11 @@ package solver;
 
 import model.SearchProblem;
 import model.SearchResult;
+import model.SearchProgress;
 
 public interface Solver {
   
-  SearchResult solve(SearchProblem problem);
+  SearchResult solve(SearchProblem problem, SearchProgress progress);
 
   String getName();
 

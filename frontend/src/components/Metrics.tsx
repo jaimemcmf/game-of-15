@@ -18,7 +18,6 @@ type Props = {
 const formatMetric = (row: Result) => {
   if (row.timedOut) {
     return {
-      nodes: "—",
       depth: "—",
       time: "—",
     };
@@ -73,7 +72,7 @@ export function Metrics({ data }: Props) {
 
                 <TableCell>{row.heuristic ?? "—"}</TableCell>
 
-                <TableCell>{f.nodes}</TableCell>
+                <TableCell>{row.nodesExpanded}</TableCell>
 
                 <TableCell>{f.depth}</TableCell>
 

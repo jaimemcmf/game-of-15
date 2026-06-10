@@ -13,7 +13,7 @@ public record SearchResult(
     public static SearchResult unsolvable() {
         return new SearchResult(List.of(), 0, false, 0, 0, false);
     }
-    public static SearchResult timedOutSearchResult() {
-        return new SearchResult(List.of(), 0, false, 0, 0, true);
+    public static SearchResult timedOutSearchResult(int expandedNodes) {
+        return new SearchResult(List.of(), 0, false, expandedNodes, 0, true);
     }
 }

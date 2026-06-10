@@ -133,6 +133,7 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
         <CardFooter className="flex flex-col gap-2">
           <Button
             className="w-full"
+            variant="default"
             disabled={loading || !algorithm || (showHeuristic && !heuristic)}
             onClick={() => {
               if (algorithm) {
@@ -149,7 +150,7 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
 
           <Button
             className="w-full"
-            variant="secondary"
+            variant="default"
             disabled={loading}
             onClick={() => onCompare(timeOutLimit)}
           >
@@ -187,7 +188,7 @@ export function Controls({ onSolve, onCompare, onRandomize, loading }: Props) {
 
         <CardFooter>
           <Button
-            variant="outline"
+            variant="default"
             className="w-full"
             disabled={loading}
             onClick={() => onRandomize(difficulty)}

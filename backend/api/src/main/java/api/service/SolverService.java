@@ -24,17 +24,19 @@ public class SolverService {
         Solver solver = createSolver(algorithm, heuristic);
         PuzzleState initial = new PuzzleState(initialBoard);
         SearchProblem problem = new SearchProblem(initial);
+        SearchProgress progress = new SearchProgress();
 
-        Future<SearchResult> future = executor.submit(() -> solver.solve(problem));
+        Future<SearchResult> future = executor.submit(() -> solver.solve(problem, progress));
 
         try {
             return future.get(timeOutLimit, TimeUnit.SECONDS);
-
         } catch (TimeoutException e) {
+
+            int expandedNodes = progress.getExpandedNodes();
 
             future.cancel(true); // attempt to stop execution
 
-            return SearchResult.timedOutSearchResult();
+            return SearchResult.timedOutSearchResult(expandedNodes);
 
         } catch (ExecutionException e) {
 

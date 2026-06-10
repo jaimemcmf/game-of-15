@@ -24,8 +24,10 @@ class BFSTest {
 
         BFS bfs = new BFS();
 
+        SearchProgress progress = new SearchProgress();
+
         SearchResult result =
-                bfs.solve(problem);
+                bfs.solve(problem, progress);
 
         assertTrue(result.solved());
         assertEquals(1, result.depth());

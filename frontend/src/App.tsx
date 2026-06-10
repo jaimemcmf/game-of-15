@@ -15,7 +15,7 @@ import type { Difficulty } from "./types/Difficulty";
 
 export default function App() {
   const [state, setState] = useState(() => ({
-    tiles: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15],
+    tiles: generateBoardFromGoal(10), 
   }));
 
   const [loading, setLoading] = useState(false);

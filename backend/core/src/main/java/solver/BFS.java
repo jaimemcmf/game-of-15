@@ -7,7 +7,7 @@ import java.util.*;
 
 public class BFS implements Solver {
     @Override
-    public SearchResult solve(SearchProblem problem) {
+    public SearchResult solve(SearchProblem problem, SearchProgress progress) {
         if (problem.initialState().equals(problem.goalState())) {
             return new SearchResult(new ArrayList<>(), 0, true, 1, 0, false);
         }
@@ -22,7 +22,9 @@ public class BFS implements Solver {
         
         while (!queue.isEmpty()) {
             SearchNode currentNode = queue.poll();
-            
+
+            progress.setExpandedNodes(visited.size());
+
             // Generate next states with their corresponding moves
             Map<Move, PuzzleState> nextStatesWithMoves = currentNode.getState().getNextStatesWithMoves();
             

@@ -2,6 +2,7 @@ package service;
 
 import model.SearchProblem;
 import model.SearchResult;
+import model.SearchProgress;
 import solver.Solver;
 
 public class SearchService {
@@ -14,12 +15,13 @@ public class SearchService {
 
     public SearchResult solve(
             Solver solver,
-            SearchProblem problem) {
+            SearchProblem problem,
+            SearchProgress progress) {
 
         if (isUnsolvable(problem)) {
             return SearchResult.unsolvable();
         }
 
-        return solver.solve(problem);
+        return solver.solve(problem, progress);
     }
 }

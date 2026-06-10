@@ -18,7 +18,7 @@ public class IDAStar implements Solver {
   }
 
   @Override
-  public SearchResult solve(SearchProblem problem) {
+  public SearchResult solve(SearchProblem problem, SearchProgress progress) {
 
     long startTime = System.currentTimeMillis();
 
@@ -37,56 +37,53 @@ public class IDAStar implements Solver {
 
     while (!found) {
 
+      progress.setExpandedNodes(expandedNodes);
+
       int t = search(
-        new SearchNode(start, null, 0, 0, null),
-        goal,
-        bound,
-        new HashSet<>(),
-        new ArrayList<>()
-      );
+          new SearchNode(start, null, 0, 0, null),
+          goal,
+          bound,
+          new HashSet<>(),
+          new ArrayList<>());
 
       if (found) {
         return new SearchResult(
-          solutionPath,
-          solutionPath.size(),
-          true,
-          expandedNodes,
-          System.currentTimeMillis() - startTime,
-          false
-        );
+            solutionPath,
+            solutionPath.size(),
+            true,
+            expandedNodes,
+            System.currentTimeMillis() - startTime,
+            false);
       }
 
       if (t == Integer.MAX_VALUE) {
         return new SearchResult(
-          new ArrayList<>(),
-          -1,
-          false,
-          expandedNodes,
-          System.currentTimeMillis() - startTime,
-          false
-        );
+            new ArrayList<>(),
+            -1,
+            false,
+            expandedNodes,
+            System.currentTimeMillis() - startTime,
+            false);
       }
 
       bound = t;
     }
 
     return new SearchResult(
-      new ArrayList<>(),
-      -1,
-      false,
-      expandedNodes,
-      System.currentTimeMillis() - startTime,
-      false
-    );
+        new ArrayList<>(),
+        -1,
+        false,
+        expandedNodes,
+        System.currentTimeMillis() - startTime,
+        false);
   }
 
   private int search(
-    SearchNode node,
-    PuzzleState goal,
-    int bound,
-    Set<PuzzleState> path,
-    List<Move> moves
-  ) {
+      SearchNode node,
+      PuzzleState goal,
+      int bound,
+      Set<PuzzleState> path,
+      List<Move> moves) {
 
     PuzzleState state = node.getState();
 
@@ -126,7 +123,8 @@ public class IDAStar implements Solver {
 
       int t = search(child, goal, bound, path, moves);
 
-      if (found) return t;
+      if (found)
+        return t;
 
       if (t < min) {
         min = t;

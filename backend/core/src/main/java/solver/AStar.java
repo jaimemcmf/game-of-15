@@ -14,7 +14,7 @@ public class AStar implements Solver {
   }
 
   @Override
-  public SearchResult solve(SearchProblem problem) {
+  public SearchResult solve(SearchProblem problem, SearchProgress progress) {
 
     if (problem.initialState().equals(problem.goalState())) {
       return new SearchResult(new ArrayList<>(), 0, true, 1, 0, false);
@@ -45,6 +45,7 @@ public class AStar implements Solver {
 
       SearchNode current = openSet.poll();
       expandedNodes++;
+      progress.setExpandedNodes(expandedNodes);
 
       // If this is a stale node (worse than already found path), skip it
       int currentG = current.getDepth();
